@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/my_account"
+        android:icon="@drawable/basic_account"
+        android:title="내정보"/>
+    <item android:id="@+id/log"
+        android:icon="@drawable/baseline_directions_car_24"
+        android:title="이용내역"/>
+    <item android:id="@+id/add_card"
+        android:icon="@drawable/basic_add_card"
+        android:title="결제수단 추가"/>
+
+</menu>
