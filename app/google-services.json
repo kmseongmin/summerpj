@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "887013404154",
+    "project_id": "summerpj-22282",
+    "storage_bucket": "summerpj-22282.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:887013404154:android:772d42642bfdcf5d6f0843",
+        "android_client_info": {
+          "package_name": "com.example.summerpj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "887013404154-9pua7uissse4cvar1goi0pbtpad8hob1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.summerpj",
+            "certificate_hash": "d0112d594e1883492b97b51982a989cd546c2a94"
+          }
+        },
+        {
+          "client_id": "887013404154-jo7imlsd72lnr55k6624i4voo4kqib5s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmn15EW7-ZjEvo8nFTWVHmMFo1zYb8kBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "887013404154-jo7imlsd72lnr55k6624i4voo4kqib5s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
