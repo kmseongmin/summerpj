@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.summerpj.databinding.ActivityMainBinding
 
 class MainroomActivity : AppCompatActivity() {
     lateinit var toolbar:Toolbar
