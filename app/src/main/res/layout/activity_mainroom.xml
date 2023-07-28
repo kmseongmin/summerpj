@@ -11,6 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/mainroom_toolbar" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="200dp"
+            android:visibility="visible"
+            app:cameraTargetLat="37.7749"
+            app:cameraTargetLng="-122.4194"
+            app:cameraZoom="15.0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:liteMode="false"
+            app:mapType="normal" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/main_navigationView"
