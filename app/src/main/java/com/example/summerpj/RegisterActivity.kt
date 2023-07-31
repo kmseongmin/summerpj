@@ -102,7 +102,7 @@ class RegisterActivity : AppCompatActivity() {
                             }
                     } else {
                         if (task.exception is FirebaseAuthUserCollisionException) {
-                            Toast.makeText(this, "다른 이메일 주소를 사용해주세요.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "이미 등록된 이메일 주소입니다.", Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this, "계정 생성 실패", Toast.LENGTH_SHORT).show()
                         }
