@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -18,9 +19,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var Autologin: CheckBox
     lateinit var loginbtn: Button
     lateinit var Registerbtn: Button
-
-    private var email: String = ""
-    private var password: String = ""
+    lateinit var findPwdbtn: Button
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var sharedPreferences: SharedPreferences
@@ -36,22 +35,16 @@ class MainActivity : AppCompatActivity() {
         Autologin = findViewById(R.id.Autologin)
         loginbtn = findViewById(R.id.loginbtn)
         Registerbtn = findViewById(R.id.Registerbtn)
+        findPwdbtn = findViewById(R.id.findPWbtn)
 
         sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
 
-        // 마지막으로 사용자가 자동 로그인을 설정한 상태를 가져와서 설정
         Autologin.isChecked = sharedPreferences.getBoolean("autoLogin", false)
 
-        // Autologin 체크박스의 상태 변경 리스너 설정
-        Autologin.setOnCheckedChangeListener { _, isChecked ->
-            sharedPreferences.edit()
-                .putBoolean("autoLogin", isChecked)
-                .apply()
-        }
-
+        // 로그인 버튼
         loginbtn.setOnClickListener {
-            email = Emailedt.text.toString()
-            password = Passwordedt.text.toString()
+            val email = Emailedt.text.toString()
+            val password = Passwordedt.text.toString()
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "이메일과 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show()
@@ -61,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        var user = firebaseAuth.currentUser
+                        val user = firebaseAuth.currentUser
                         if (user != null && user.isEmailVerified) {
                             sharedPreferences.edit()
                                 .putString("email", email)
@@ -80,9 +73,60 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
+        Autologin.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit()
+                .putBoolean("autoLogin", isChecked)
+                .apply()
+        }
+
+        //회원가입 버튼
         Registerbtn.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+        }
+
+        //비밀번호 찾기 버튼
+        findPwdbtn.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("비밀번호 찾기")
+            builder.setIcon(R.drawable.pwicon)
+
+            val Email = EditText(this)
+            Email.hint = "이메일을 입력해주세요."
+            builder.setView(Email)
+
+            builder.setPositiveButton("확인") { dialog, _ ->
+                val email = Email.text.toString().trim()
+                if (!email.isEmpty()) {
+                    firebaseAuth.fetchSignInMethodsForEmail(email)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val signInMethods = task.result?.signInMethods
+                                if (signInMethods.isNullOrEmpty()) {
+                                    Toast.makeText(this, "틀린 이메일입니다.", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    firebaseAuth.sendPasswordResetEmail(email)
+                                        .addOnCompleteListener { resetTask ->
+                                            if (resetTask.isSuccessful) {
+                                                Toast.makeText(this, "비밀번호 재설정 이메일을 보냈습니다.", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(this, "비밀번호 재설정 이메일을 보내지 못했습니다.", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                }
+                            } else {
+                                Toast.makeText(this, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                } else {
+                    Toast.makeText(this, "이메일을 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            builder.setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
         }
     }
 }
