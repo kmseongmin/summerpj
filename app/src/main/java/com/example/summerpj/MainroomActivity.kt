@@ -19,10 +19,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
+
 
 
 class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -33,6 +32,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var main_nav:NavigationView
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private var locationPermissionGranted = false
+    var mycurrentlocation:LatLng? = null
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +60,15 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         main_nav.setNavigationItemSelectedListener {menuItem->
             when (menuItem.itemId){
                 R.id.my_account->{
-                    val intent = Intent(this, myinfo::class.java)
-                    startActivity(intent)
+                    val myinfo_intent = Intent(this, myinfo::class.java)
+                    startActivity(myinfo_intent)
                     true
                 }
-
+                R.id.log->{
+                    val driving_recode_intent = Intent(this, driving_recode::class.java)
+                    startActivity(driving_recode_intent)
+                    true
+                }
                 else -> {false}
             }
         }
@@ -121,6 +125,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         if (locationPermissionGranted) {
             // 위치 권한이 허용된 경우에만 내 위치를 표시하도록 호출
             enableMyLocation()
+
         }
     }
 
@@ -140,8 +145,8 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         try {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 location?.let {
-                    val currentLocation = LatLng(location.latitude, location.longitude)
-                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+                    mycurrentlocation = LatLng(location.latitude, location.longitude)
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(mycurrentlocation!!, 15f))
                 }
             }
         } catch (e: SecurityException) {

@@ -27,6 +27,9 @@
         android:theme="@style/Theme.Summerpj"
         tools:targetApi="31">
         <activity
+            android:name=".driving_recode"
+            android:exported="false" />
+        <activity
             android:name=".myinfo"
             android:exported="false" />
         <activity
