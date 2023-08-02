@@ -32,14 +32,15 @@ class MainActivity : AppCompatActivity() {
 
         Emailedt = findViewById(R.id.Emailedt)
         Passwordedt = findViewById(R.id.Passwordedt)
-        Autologin = findViewById(R.id.Autologin)
+
         loginbtn = findViewById(R.id.loginbtn)
         Registerbtn = findViewById(R.id.Registerbtn)
         findPwdbtn = findViewById(R.id.findPWbtn)
 
         sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-
+        Autologin = findViewById(R.id.Autologin)
         Autologin.isChecked = sharedPreferences.getBoolean("autoLogin", false)
+
 
         // 로그인 버튼
         loginbtn.setOnClickListener {
@@ -77,6 +78,16 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.edit()
                 .putBoolean("autoLogin", isChecked)
                 .apply()
+        }
+
+        if(Autologin.isChecked){
+            val email = sharedPreferences.getString("email", null)
+            val password = sharedPreferences.getString("password", null)
+            if(email!!.isNotEmpty() && password!!.isNotEmpty()){
+                Emailedt.setText(email)
+                Passwordedt.setText(password)
+                loginbtn.performClick()
+            }
         }
 
         //회원가입 버튼
