@@ -8,6 +8,6 @@
         android:title="이용내역"/>
     <item android:id="@+id/logout"
         android:icon="@drawable/baseline_logout_24"
-        android:title="결제수단 추가"/>
+        android:title="로그아웃"/>
 
 </menu>
