@@ -6,8 +6,8 @@
     <item android:id="@+id/log"
         android:icon="@drawable/baseline_directions_car_24"
         android:title="이용내역"/>
-    <item android:id="@+id/add_card"
-        android:icon="@drawable/basic_add_card"
+    <item android:id="@+id/logout"
+        android:icon="@drawable/baseline_logout_24"
         android:title="결제수단 추가"/>
 
 </menu>

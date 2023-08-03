@@ -21,7 +21,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
 import com.google.android.libraries.places.api.Places
-
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
+import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.model.RectangularBounds
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 
 
 class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -67,6 +75,11 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
                 R.id.log->{
                     val driving_recode_intent = Intent(this, driving_recode::class.java)
                     startActivity(driving_recode_intent)
+                    true
+                }
+                //로그아웃 기능
+                R.id.logout->{
+
                     true
                 }
                 else -> {false}
@@ -125,9 +138,50 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         if (locationPermissionGranted) {
             // 위치 권한이 허용된 경우에만 내 위치를 표시하도록 호출
             enableMyLocation()
-
+            //searchNearbyParkingLots()
         }
     }
+
+    // 주차장 찾기 함수
+    /*@SuppressLint("MissingPermission")
+    private fun searchNearbyParkingLots() {
+        if (mycurrentlocation == null) {
+            // 현재 위치를 알 수 없는 경우 처리
+            Toast.makeText(this, "현재 위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val placesClient = Places.createClient(this)
+
+        val placeFields = listOf(Place.Field.NAME, Place.Field.LAT_LNG)
+        val request = FindCurrentPlaceRequest.builder(placeFields).build()
+
+        placesClient.findCurrentPlace(request).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val response = task.result
+                response?.let {
+                    val nearByParkingLots = it.placeLikelihoods.filter { placeLikelihood ->
+                        placeLikelihood.place.types?.contains(Place.Type.PARKING) == true
+                    }
+
+                    for (placeLikelihood in nearByParkingLots) {
+                        val place = placeLikelihood.place
+                        val latLng = place.latLng
+                        if (latLng != null) {
+                            val markerOptions = MarkerOptions()
+                                .position(latLng)
+                                .title(place.name)
+
+                            googleMap?.addMarker(markerOptions)
+                        }
+                    }
+                }
+            } else {
+                // 오류 처리
+                Toast.makeText(this, "주변 주차장을 검색하는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }*/
 
     private fun enableMyLocation() {
         if (googleMap != null) {
