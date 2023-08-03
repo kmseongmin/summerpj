@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : AppCompatActivity() {
     lateinit var Emailedt: EditText
     lateinit var Passwordedt: EditText
-    lateinit var Autologin: CheckBox
+    lateinit var AutologinCheckBox: CheckBox
     lateinit var loginbtn: Button
     lateinit var Registerbtn: Button
     lateinit var findPwdbtn: Button
@@ -38,8 +38,14 @@ class MainActivity : AppCompatActivity() {
         findPwdbtn = findViewById(R.id.findPWbtn)
 
         sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        Autologin = findViewById(R.id.Autologin)
-        Autologin.isChecked = sharedPreferences.getBoolean("autoLogin", false)
+        AutologinCheckBox = findViewById(R.id.Autologin)
+
+        AutologinCheckBox.isChecked = sharedPreferences.getBoolean("Autologin", false)
+        AutologinCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit()
+                .putBoolean("Autologin", isChecked)
+                .apply()
+        }
 
 
         // 로그인 버튼
@@ -63,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                                 .apply()
                             Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, MainroomActivity::class.java)
+                            intent.flags=Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
                         } else {
@@ -74,13 +81,7 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
-        Autologin.setOnCheckedChangeListener { _, isChecked ->
-            sharedPreferences.edit()
-                .putBoolean("autoLogin", isChecked)
-                .apply()
-        }
-
-        if(Autologin.isChecked){
+        if(AutologinCheckBox.isChecked){
             val email = sharedPreferences.getString("email", null)
             val password = sharedPreferences.getString("password", null)
             if(email!!.isNotEmpty() && password!!.isNotEmpty()){

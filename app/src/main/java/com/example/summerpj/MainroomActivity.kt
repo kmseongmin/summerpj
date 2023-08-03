@@ -2,6 +2,7 @@ package com.example.summerpj
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -79,7 +80,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 //로그아웃 기능
                 R.id.logout->{
-
+                    Logout()
                     true
                 }
                 else -> {false}
@@ -140,6 +141,20 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
             enableMyLocation()
             //searchNearbyParkingLots()
         }
+    }
+
+    private fun Logout(){
+        val preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putBoolean("Autologin", false)
+        editor.apply()
+
+        // 로그아웃 후 로그인 화면으로 이동하도록 코드를 추가할 수 있습니다.
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+
+        // 현재 액티비티를 종료하여 사용자가 로그인 화면에서 뒤로 가기를 눌러도 다시 로그인 화면으로 돌아오지 않도록 할 수 있습니다.
+        finish()
     }
 
     // 주차장 찾기 함수
