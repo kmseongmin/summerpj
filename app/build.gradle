@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.example.summerpj'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.summerpj"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -63,4 +63,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
 
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
+    implementation 'com.google.android.material:material:1.4.0-alpha02'
+    implementation 'noman.placesapi:placesAPI:1.1.3'
 }

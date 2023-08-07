@@ -5,8 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -20,28 +26,32 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.navigation.NavigationView
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import android.location.Location
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.model.RectangularBounds
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
-import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.navigation.NavigationView
+import noman.googleplaces.NRPlaces
+import noman.googleplaces.Place
+import noman.googleplaces.PlaceType
+import noman.googleplaces.PlacesException
+import noman.googleplaces.PlacesListener
+import java.io.IOException
+import java.util.Locale
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-
-class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
+    OnRequestPermissionsResultCallback{
     lateinit var toolbar:Toolbar
     lateinit var main_drawer_layout:DrawerLayout
     private lateinit var mapView: MapView
-    private var googleMap: GoogleMap? = null
     lateinit var main_nav:NavigationView
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private var locationPermissionGranted = false
     var mycurrentlocation:LatLng? = null
+    private var googleMap: GoogleMap? = null
+    var previous_marker: MutableList<Marker>? = null
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,11 +69,6 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.baseline_menu_24) // 홈버튼 이미지 변경
-
-        //place api 추가
-        if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyB57FGSwBEESpdkLu9lM9H_kOt7DMyAfAY")
-        }
 
         //네비게이션 아이템 SelectedListener
         main_nav.setNavigationItemSelectedListener {menuItem->
@@ -92,6 +97,12 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         checkLocationPermission()
+        previous_marker = ArrayList()
+
+        val b1 = findViewById<Button>(R.id.b1)
+        b1.setOnClickListener {
+            mycurrentlocation?.let { it1 -> showPlaceInformation(it1) }
+        }
     }
 
     private fun checkLocationPermission() {
@@ -135,11 +146,10 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(map: GoogleMap) {
-        this.googleMap = map
+        googleMap = map
         if (locationPermissionGranted) {
             // 위치 권한이 허용된 경우에만 내 위치를 표시하도록 호출
             enableMyLocation()
-            //searchNearbyParkingLots()
         }
     }
 
@@ -156,47 +166,6 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         // 현재 액티비티를 종료하여 사용자가 로그인 화면에서 뒤로 가기를 눌러도 다시 로그인 화면으로 돌아오지 않도록 할 수 있습니다.
         finish()
     }
-
-    // 주차장 찾기 함수
-    /*@SuppressLint("MissingPermission")
-    private fun searchNearbyParkingLots() {
-        if (mycurrentlocation == null) {
-            // 현재 위치를 알 수 없는 경우 처리
-            Toast.makeText(this, "현재 위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val placesClient = Places.createClient(this)
-
-        val placeFields = listOf(Place.Field.NAME, Place.Field.LAT_LNG)
-        val request = FindCurrentPlaceRequest.builder(placeFields).build()
-
-        placesClient.findCurrentPlace(request).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val response = task.result
-                response?.let {
-                    val nearByParkingLots = it.placeLikelihoods.filter { placeLikelihood ->
-                        placeLikelihood.place.types?.contains(Place.Type.PARKING) == true
-                    }
-
-                    for (placeLikelihood in nearByParkingLots) {
-                        val place = placeLikelihood.place
-                        val latLng = place.latLng
-                        if (latLng != null) {
-                            val markerOptions = MarkerOptions()
-                                .position(latLng)
-                                .title(place.name)
-
-                            googleMap?.addMarker(markerOptions)
-                        }
-                    }
-                }
-            } else {
-                // 오류 처리
-                Toast.makeText(this, "주변 주차장을 검색하는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }*/
 
     private fun enableMyLocation() {
         if (googleMap != null) {
@@ -249,4 +218,81 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onDestroy()
     }
 
+    override fun onPlacesFailure(e: PlacesException?) {
+    }
+
+    override fun onPlacesStart() {
+    }
+
+    override fun onPlacesSuccess(places: List<Place>) {
+        runOnUiThread {
+            for (place in places) {
+                val latLng = LatLng(
+                    place.latitude, place.longitude
+                )
+                val markerIcon = BitmapFactory.decodeResource(resources, R.drawable.icon_parking)
+                val scaledMarkerIcon = Bitmap.createScaledBitmap(markerIcon, 100, 100, false)
+                val markerSnippet: String = getCurrentAddress(latLng)
+                val markerOptions = MarkerOptions()
+                markerOptions.position(latLng)
+                markerOptions.title(place.name)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(scaledMarkerIcon))
+                markerOptions.snippet(markerSnippet)
+                val item = googleMap!!.addMarker(markerOptions)
+                previous_marker!!.add(item!!)
+
+            }
+
+            //중복 마커 제거
+            val hashSet = HashSet<Marker>()
+            hashSet.addAll(previous_marker!!)
+            previous_marker!!.clear()
+            previous_marker!!.addAll(hashSet)
+        }
+    }
+
+    override fun onPlacesFinished() {
+    }
+
+    fun showPlaceInformation(location: LatLng) {
+        getCurrentLocation()
+        googleMap!!.clear() //지도 클리어
+        if (previous_marker != null) previous_marker!!.clear()
+        NRPlaces.Builder()
+            .listener(this@MainroomActivity)
+            .key("AIzaSyADvY2EaKlHIOfU7clZGQuDDSiCl8G6bWg")
+            .latlng(location.latitude, location.longitude) //현재 위치
+            .radius(1000) //1키로 내 검색
+            .type(PlaceType.PARKING) //주차장검색
+            .build()
+            .execute()
+    }
+
+    fun getCurrentAddress(latlng: LatLng): String {
+
+        //지오코더... GPS를 주소로 변환
+        val geocoder = Geocoder(this, Locale.getDefault())
+        val addresses: List<Address>?
+        try {
+            addresses = geocoder.getFromLocation(
+                latlng.latitude,
+                latlng.longitude,
+                1
+            )
+        } catch (ioException: IOException) {
+            //네트워크 문제
+            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show()
+            return "지오코더 서비스 사용불가"
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show()
+            return "잘못된 GPS 좌표"
+        }
+        if (addresses == null || addresses.size == 0) {
+            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show()
+            return "주소 미발견"
+        } else {
+            val address = addresses[0]
+            return address.getAddressLine(0).toString()
+        }
+    }
 }
