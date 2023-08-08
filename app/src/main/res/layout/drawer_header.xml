@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:padding="20dp"
+    android:background="@color/pink"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/header_icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/basic_account"/>
+        android:src="@drawable/baseline_account_circle_24"/>
 
     <TextView
         android:id="@+id/hearder_name"
@@ -19,7 +20,7 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:textColor="#000000"
+        android:textColor="@color/white"
         android:text="이름"/>
 
     <TextView
@@ -27,6 +28,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15dp"
-        android:textColor="#EB554C4C"
+        android:textColor="@color/white"
         android:text="이메일"/>
 </LinearLayout>
