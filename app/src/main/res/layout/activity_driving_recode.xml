@@ -11,7 +11,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="이용내역"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/darkPink"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="222dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/recodeContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp" />
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

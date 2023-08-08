@@ -2,6 +2,7 @@ package com.example.summerpj
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -45,6 +47,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -71,6 +75,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
     var selectedMarkerDate: String = ""
     //선택된 마커 변수
     var selectedMarker: Marker? = null
+
 
     @SuppressLint("ResourceType", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,16 +138,36 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
                 selectedMarkerAddress = it.snippet.toString()//주소 저장
                 selectedMarkerDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) // 현재 날짜 저장
                 selectedMarker = null
+
+                addUserDataToFirestore(selectedMarkerTitle, selectedMarkerAddress, selectedMarkerDate)
             }
-
             b2.visibility = View.INVISIBLE
-
         }
 
         //헤더 이름, 이메일
         heardername = findViewById(R.id.hearder_name)
         hearderemail = findViewById(R.id.hearder_email)
 
+    }
+
+    private fun addUserDataToFirestore(selectedMarkerTitle: String, selectedMarkerAddress: String, selectedMarkerDate: String) {
+        val db = Firebase.firestore
+        val recode = hashMapOf(
+            "title" to selectedMarkerTitle,
+            "address" to selectedMarkerAddress,
+            "data" to selectedMarkerDate
+        )
+
+        db.collection("recode")
+            .add(recode)
+            .addOnSuccessListener { documentReference ->
+                Log.d(ContentValues.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                // 데이터 추가 성공
+            }
+            .addOnFailureListener { e ->
+                Log.w(ContentValues.TAG, "Error adding document", e)
+                // 데이터 추가 실패
+            }
     }
 
     private fun checkLocationPermission() {
