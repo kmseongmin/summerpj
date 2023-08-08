@@ -66,8 +66,8 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
     var previous_marker: MutableList<Marker>? = null
     lateinit var b2:Button
     lateinit var item: Marker
-    private lateinit var heardername:TextView
-    private lateinit var hearderemail:TextView
+    private lateinit var headername:TextView
+    private lateinit var headeremail:TextView
 
     // 선택된 마커 정보를 저장할 변수들
     var selectedMarkerTitle: String = ""
@@ -139,14 +139,15 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
                 selectedMarkerDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) // 현재 날짜 저장
                 selectedMarker = null
 
-                addUserDataToFirestore(selectedMarkerTitle, selectedMarkerAddress, selectedMarkerDate)
+                //ddUserDataToFirestore(selectedMarkerTitle, selectedMarkerAddress, selectedMarkerDate)
             }
             b2.visibility = View.INVISIBLE
         }
 
         //헤더 이름, 이메일
-        heardername = findViewById(R.id.hearder_name)
-        hearderemail = findViewById(R.id.hearder_email)
+        val headerView = main_nav.getHeaderView(0)
+        headername = headerView.findViewById(R.id.hearder_name)
+        headeremail = headerView.findViewById(R.id.hearder_email)
 
     }
 
