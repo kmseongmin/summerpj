@@ -9,11 +9,13 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -47,6 +49,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
@@ -75,6 +80,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
     var selectedMarkerDate: String = ""
     //선택된 마커 변수
     var selectedMarker: Marker? = null
+    var userName:String = ""
 
 
     @SuppressLint("ResourceType", "SimpleDateFormat")
@@ -149,14 +155,44 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
         headername = headerView.findViewById(R.id.hearder_name)
         headeremail = headerView.findViewById(R.id.hearder_email)
 
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val dataRef: CollectionReference = db.collection("users")
+        val auth = Firebase.auth
+        // 현재 로그인된 사용자의 정보 가져오기
+        val currentUser = auth.currentUser
+        val userEmail = currentUser?.email
+        headeremail.text = userEmail
+
+        dataRef.get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    if(document.getString("email") == userEmail){
+                        val name = document.getString("name")
+                        if (!name.isNullOrEmpty()) {
+                            headername.text = name
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 데이터 읽기 실패 시 처리
+                // 예: Log.e("Firestore", "Error getting documents: ", exception)
+            }
+
     }
 
     private fun addUserDataToFirestore(selectedMarkerTitle: String, selectedMarkerAddress: String, selectedMarkerDate: String) {
         val db = Firebase.firestore
+        val auth = Firebase.auth
+
+        // 현재 로그인된 사용자의 정보 가져오기
+        val currentUser = auth.currentUser
+        val userEmail = currentUser?.email
         val recode = hashMapOf(
             "title" to selectedMarkerTitle,
             "address" to selectedMarkerAddress,
-            "data" to selectedMarkerDate
+            "data" to selectedMarkerDate,
+            "email" to userEmail
         )
 
         db.collection("recode")

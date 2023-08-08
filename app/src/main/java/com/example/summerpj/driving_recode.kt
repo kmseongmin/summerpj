@@ -13,11 +13,13 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class driving_recode : AppCompatActivity() {
@@ -32,32 +34,38 @@ class driving_recode : AppCompatActivity() {
         scrollView = findViewById(R.id.scv)
         linearLayout = findViewById(R.id.scLinear)
 
-        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-        val dataRef: CollectionReference = db.collection("recode")
-
         val buttonLayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         buttonLayoutParams.setMargins(0, 4.dpToPx(), 0, 4.dpToPx())
 
+
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val dataRef: CollectionReference = db.collection("recode")
+        val auth = Firebase.auth
+        // 현재 로그인된 사용자의 정보 가져오기
+        val currentUser = auth.currentUser
+        val userEmail = currentUser?.email
+
         dataRef.get()
             .addOnSuccessListener { documents ->
-
                 for (document in documents) {
-                    val title = document.getString("title")
-                    val address = document.getString("address")
-                    val data = document.getString("data")
+                    if(document.getString("email") == userEmail){
+                        val title = document.getString("title")
+                        val address = document.getString("address")
+                        val data = document.getString("data")
 
-                    if (!title.isNullOrEmpty()) {
-
-                        val button = Button(this)
-                        button.layoutParams = buttonLayoutParams
-                        button.text = "$data\n장소 : $title\n주소 : $address"
-                        button.gravity = Gravity.CENTER_VERTICAL
-                        button.setBackgroundColor(Color.WHITE)
-                        linearLayout.addView(button)
+                        if (!title.isNullOrEmpty()) {
+                            val button = Button(this)
+                            button.layoutParams = buttonLayoutParams
+                            button.text = "$data\n장소 : $title\n주소 : $address"
+                            button.gravity = Gravity.CENTER_VERTICAL
+                            button.setBackgroundColor(Color.WHITE)
+                            linearLayout.addView(button)
+                        }
                     }
+
                 }
 
 
