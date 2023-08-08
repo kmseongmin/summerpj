@@ -12,7 +12,9 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -39,10 +41,14 @@ import java.util.Locale
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
-    OnRequestPermissionsResultCallback{
+    OnRequestPermissionsResultCallback,
+    OnMarkerClickListener, GoogleMap.OnMapClickListener {
     lateinit var toolbar:Toolbar
     lateinit var main_drawer_layout:DrawerLayout
     private lateinit var mapView: MapView
@@ -52,8 +58,17 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
     var mycurrentlocation:LatLng? = null
     private var googleMap: GoogleMap? = null
     var previous_marker: MutableList<Marker>? = null
+    lateinit var b2:Button
+    lateinit var item: Marker
 
-    @SuppressLint("ResourceType")
+    // 선택된 마커 정보를 저장할 변수들
+    var selectedMarkerTitle: String = ""
+    var selectedMarkerAddress: String = ""
+    var selectedMarkerDate: String = ""
+    //선택된 마커 변수
+    var selectedMarker: Marker? = null
+
+    @SuppressLint("ResourceType", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mainroom)
@@ -103,6 +118,20 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
         b1.setOnClickListener {
             mycurrentlocation?.let { it1 -> showPlaceInformation(it1) }
         }
+
+        b2 = findViewById(R.id.b2)
+        b2.setOnClickListener {
+            selectedMarker?.let {
+                //선택된 마커 정보저장
+                selectedMarkerTitle = it.title.toString()//장소이름 저장
+                selectedMarkerAddress = it.snippet.toString()//주소 저장
+                selectedMarkerDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) // 현재 날짜 저장
+                selectedMarker = null
+            }
+
+            b2.visibility = View.INVISIBLE
+
+        }
     }
 
     private fun checkLocationPermission() {
@@ -147,10 +176,15 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        //마커클릭리스너
+        googleMap!!.setOnMarkerClickListener(this)
+        //구글맵 클릭 리스너
+        googleMap!!.setOnMapClickListener(this)
         if (locationPermissionGranted) {
             // 위치 권한이 허용된 경우에만 내 위치를 표시하도록 호출
             enableMyLocation()
         }
+
     }
 
     private fun Logout(){
@@ -238,8 +272,10 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
                 markerOptions.title(place.name)
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(scaledMarkerIcon))
                 markerOptions.snippet(markerSnippet)
-                val item = googleMap!!.addMarker(markerOptions)
-                previous_marker!!.add(item!!)
+
+
+                item = googleMap!!.addMarker(markerOptions)!!
+                previous_marker!!.add(item)
 
             }
 
@@ -295,4 +331,19 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
             return address.getAddressLine(0).toString()
         }
     }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+
+        b2.visibility = View.VISIBLE
+        selectedMarker = marker
+
+        return false
+    }
+
+    override fun onMapClick(latLng: LatLng) {
+        // 구글 지도 클릭 시 이용하기 버튼 숨기기
+        b2.visibility = View.INVISIBLE
+
+    }
+
 }
