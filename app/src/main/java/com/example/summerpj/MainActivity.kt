@@ -139,6 +139,14 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             val dialog = builder.create()
+
+            dialog.setOnShowListener {
+                val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+                positiveButton.setTextColor(resources.getColor(R.color.black)) // 원하는 긍정 버튼 색상으로 변경
+                negativeButton.setTextColor(resources.getColor(R.color.black)) // 원하는 부정 버튼 색상으로 변경
+            }
             dialog.show()
         }
     }
