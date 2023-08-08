@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -15,6 +16,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -60,6 +62,8 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
     var previous_marker: MutableList<Marker>? = null
     lateinit var b2:Button
     lateinit var item: Marker
+    private lateinit var heardername:TextView
+    private lateinit var hearderemail:TextView
 
     // 선택된 마커 정보를 저장할 변수들
     var selectedMarkerTitle: String = ""
@@ -115,11 +119,13 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
         previous_marker = ArrayList()
 
         val b1 = findViewById<Button>(R.id.b1)
+        b1.setBackgroundColor(R.drawable.register_button)
         b1.setOnClickListener {
             mycurrentlocation?.let { it1 -> showPlaceInformation(it1) }
         }
 
         b2 = findViewById(R.id.b2)
+        b2.setBackgroundColor(R.drawable.white_blue)
         b2.setOnClickListener {
             selectedMarker?.let {
                 //선택된 마커 정보저장
@@ -132,6 +138,11 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
             b2.visibility = View.INVISIBLE
 
         }
+
+        //헤더 이름, 이메일
+        heardername = findViewById(R.id.hearder_name)
+        hearderemail = findViewById(R.id.hearder_email)
+
     }
 
     private fun checkLocationPermission() {
@@ -264,15 +275,26 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
                 val latLng = LatLng(
                     place.latitude, place.longitude
                 )
-                val markerIcon = BitmapFactory.decodeResource(resources, R.drawable.icon_parking)
-                val scaledMarkerIcon = Bitmap.createScaledBitmap(markerIcon, 100, 100, false)
+                val markerDrawable = resources.getDrawable(R.drawable.baseline_local_parking_24)
+                val scaleFactor = 1.4f // 크기 조절을 위한 값
+                val newWidth = (markerDrawable.intrinsicWidth * scaleFactor).toInt()
+                val newHeight = (markerDrawable.intrinsicHeight * scaleFactor).toInt()
+
+                markerDrawable.setBounds(0, 0, newWidth, newHeight)
+                val markerBitmap = Bitmap.createBitmap(
+                    newWidth,
+                    newHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = Canvas(markerBitmap)
+                markerDrawable.draw(canvas)
+
                 val markerSnippet: String = getCurrentAddress(latLng)
                 val markerOptions = MarkerOptions()
                 markerOptions.position(latLng)
                 markerOptions.title(place.name)
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(scaledMarkerIcon))
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(markerBitmap))
                 markerOptions.snippet(markerSnippet)
-
 
                 item = googleMap!!.addMarker(markerOptions)!!
                 previous_marker!!.add(item)

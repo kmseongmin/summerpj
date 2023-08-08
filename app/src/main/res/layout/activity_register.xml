@@ -74,7 +74,7 @@
             android:layout_gravity="start"
             android:layout_marginStart="40dp"
             android:layout_marginTop="5dp"
-            android:text="* 생년월일"
+            android:text="* 생년월일 (001230)"
             android:textColor="@color/gray"
             android:textSize="14dp" />
 

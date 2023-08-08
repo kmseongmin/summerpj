@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var AutologinCheckBox: CheckBox
     lateinit var loginbtn: Button
     lateinit var Registerbtn: Button
-    lateinit var findPwdbtn: Button
+    lateinit var findPwdbtn: TextView
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var sharedPreferences: SharedPreferences
