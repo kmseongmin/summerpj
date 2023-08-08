@@ -1,7 +1,17 @@
 package com.example.summerpj
 
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
+import android.view.Gravity
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
@@ -12,38 +22,54 @@ import com.google.firebase.ktx.Firebase
 
 class driving_recode : AppCompatActivity() {
 
-    lateinit var recodeContent: TextView
+    lateinit var scrollView: ScrollView
+    lateinit var linearLayout: LinearLayout
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driving_recode)
 
-        recodeContent = findViewById(R.id.recodeContent)
+        scrollView = findViewById(R.id.scv)
+        linearLayout = findViewById(R.id.scLinear)
+
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val dataRef: CollectionReference = db.collection("recode")
 
+        val buttonLayoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        buttonLayoutParams.setMargins(0, 4.dpToPx(), 0, 4.dpToPx())
+
         dataRef.get()
             .addOnSuccessListener { documents ->
-                val stringBuilder = StringBuilder()
+
                 for (document in documents) {
                     val title = document.getString("title")
                     val address = document.getString("address")
                     val data = document.getString("data")
 
                     if (!title.isNullOrEmpty()) {
-                        stringBuilder.append("title: $title\n")
-                        stringBuilder.append("address: $address\n")
-                        stringBuilder.append("data: $data\n")
+
+                        val button = Button(this)
+                        button.layoutParams = buttonLayoutParams
+                        button.text = "$data\n장소 : $title\n주소 : $address"
+                        button.gravity = Gravity.CENTER_VERTICAL
+                        button.setBackgroundColor(Color.WHITE)
+                        linearLayout.addView(button)
                     }
                 }
 
-                recodeContent.text = stringBuilder.toString()
+
             }
             .addOnFailureListener { exception ->
                 // 데이터 읽기 실패 시 처리
                 // 예: Log.e("Firestore", "Error getting documents: ", exception)
             }
+    }
 
-
-
+    private fun Int.dpToPx(): Int {
+        val scale = resources.displayMetrics.density
+        return (this * scale + 0.5f).toInt()
     }
 }

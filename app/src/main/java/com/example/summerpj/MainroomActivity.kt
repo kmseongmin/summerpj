@@ -139,7 +139,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
                 selectedMarkerDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()) // 현재 날짜 저장
                 selectedMarker = null
 
-                //ddUserDataToFirestore(selectedMarkerTitle, selectedMarkerAddress, selectedMarkerDate)
+                addUserDataToFirestore(selectedMarkerTitle, selectedMarkerAddress, selectedMarkerDate)
             }
             b2.visibility = View.INVISIBLE
         }
