@@ -147,22 +147,24 @@
 
         <RadioGroup
             android:id="@+id/Genderbtn"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="40dp">
+            android:layout_marginStart="40dp"
+            android:orientation="horizontal">
+
             <RadioButton
                 android:id="@+id/manbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="남성"/>
+                android:text="남성" />
+
             <RadioButton
-                android:text="여성"
                 android:id="@+id/womanbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:text="여성" />
         </RadioGroup>
 
         <androidx.appcompat.widget.AppCompatButton

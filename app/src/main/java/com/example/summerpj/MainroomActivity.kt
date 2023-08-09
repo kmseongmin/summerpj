@@ -382,7 +382,7 @@ class MainroomActivity : AppCompatActivity(), OnMapReadyCallback,PlacesListener,
             .listener(this@MainroomActivity)
             .key("AIzaSyADvY2EaKlHIOfU7clZGQuDDSiCl8G6bWg")
             .latlng(location.latitude, location.longitude) //현재 위치
-            .radius(1000) //1키로 내 검색
+            .radius(3000) //3키로 내 검색
             .type(PlaceType.PARKING) //주차장검색
             .build()
             .execute()
