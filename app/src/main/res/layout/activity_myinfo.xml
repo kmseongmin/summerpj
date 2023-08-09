@@ -38,7 +38,8 @@
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/carNum"
@@ -55,7 +56,8 @@
             android:layout_height="40dp"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
-            android:inputType="text" />
+            android:inputType="text"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/password"
@@ -76,7 +78,8 @@
             android:layout_marginTop="5dp"
             android:text="비밀번호 변경"
             android:gravity="center"
-            android:background="@drawable/register_button" />
+            android:background="@drawable/register_button"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/birthDay"
@@ -93,7 +96,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
-            android:inputType="text" />
+            android:inputType="text"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/email"
@@ -121,17 +125,20 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="40dp">
+            android:layout_marginStart="40dp"
+            android:enabled="false">
             <RadioButton
                 android:id="@+id/manbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:text="남성"/>
             <RadioButton
                 android:text="여성"
                 android:id="@+id/womanbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:layout_marginStart="16dp"/>
         </RadioGroup>
 

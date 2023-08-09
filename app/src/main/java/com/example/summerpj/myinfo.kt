@@ -62,16 +62,36 @@ class myinfo : AppCompatActivity() {
 
         // 수정하기 버튼 클릭
         binding.modifyBtn.setOnClickListener {
-            val gender: String = when (true) {
-                binding.manbtn.isChecked -> "남성"
-                binding.womanbtn.isChecked -> "여성"
-                else -> ""
+            if(binding.modifyBtn.text.toString() == "수정하기"){
+                binding.Nameedt.isEnabled = true
+                binding.Carnumberedt.isEnabled = true
+                binding.PWbtn.isEnabled = true
+                binding.Birthdayedt.isEnabled = true
+                binding.Genderbtn.isEnabled = true
+                binding.manbtn.isEnabled = true
+                binding.womanbtn.isEnabled = true
+                binding.modifyBtn.setText("수정완료")
             }
-            val car: String =binding.Carnumberedt.text.toString()
-            val name: String =binding.Nameedt.text.toString()
-            val day: String =binding.Birthdayedt.text.toString()
+            else {
+                val gender: String = when (true) {
+                    binding.manbtn.isChecked -> "남성"
+                    binding.womanbtn.isChecked -> "여성"
+                    else -> ""
+                }
+                val car: String = binding.Carnumberedt.text.toString()
+                val name: String = binding.Nameedt.text.toString()
+                val day: String = binding.Birthdayedt.text.toString()
 
-            updateUserData(gender, car, name, day, userEmail)
+                updateUserData(gender, car, name, day, userEmail)
+                binding.modifyBtn.setText("수정하기")
+                binding.Nameedt.isEnabled = false
+                binding.Carnumberedt.isEnabled = false
+                binding.PWbtn.isEnabled = false
+                binding.Birthdayedt.isEnabled = false
+                binding.Genderbtn.isEnabled = false
+                binding.manbtn.isEnabled = false
+                binding.womanbtn.isEnabled = false
+            }
         }
     }
     private fun loadUserData(email: String) {
